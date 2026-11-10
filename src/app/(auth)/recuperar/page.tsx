@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { AuthCard } from "@/components/auth-card";
 import { ResetRequestForm } from "./reset-request-form";
+import { ResetOnNavigate } from "@/components/reset-on-navigate";
 
 export const metadata: Metadata = { title: "Recuperar contraseña" };
 
@@ -17,7 +18,9 @@ export default function RecoverPage() {
         </Link>
       }
     >
-      <ResetRequestForm />
+      <ResetOnNavigate>
+        <ResetRequestForm />
+      </ResetOnNavigate>
     </AuthCard>
   );
 }

@@ -1,6 +1,6 @@
 # REVANTA — Plan de producto y arquitectura (MVP)
 
-> Estado: **plan aprobado (10/11/2026). Fases 1, 2 y 3 completadas.** No se ha creado ninguna cuenta externa ni se ha realizado ningún gasto.
+> Estado: **plan aprobado (10/11/2026). Fases 1 a 4 completadas.** No se ha creado ninguna cuenta externa ni se ha realizado ningún gasto.
 > Fecha: 10/11/2026
 
 ## 1. Inspección del entorno
@@ -115,7 +115,7 @@ Cada fase termina con: código en GitHub, pruebas ejecutadas por mí, capturas d
 | **1. Fundaciones** ✅ | Proyecto Next.js + TS + Tailwind + shadcn, sistema de diseño (colores, tipografía, logo provisional), layout responsive, Supabase local, migraciones SQL con RLS, pruebas de aislamiento entre usuarios, CI básica en GitHub Actions (lint + tests). | Nada (todo local). |
 | **2. Autenticación** ✅ | Registro, login, recuperación de contraseña, protección de rutas, perfil. | Crear proyecto Supabase al final de la fase. |
 | **3. Inventario** ✅ | CRUD de productos, fotos, búsqueda, filtros, estados. | Revisar capturas. |
-| **4. Gastos y ventas** | Registro de gastos y ventas, cálculo de beneficio neto por producto. | Revisar con 2–3 ejemplos reales tuyos. |
+| **4. Gastos y ventas** ✅ | Registro de gastos y ventas, cálculo de beneficio neto por producto. | Revisar con 2–3 ejemplos reales tuyos. |
 | **5. Panel y estadísticas** | KPIs, gráficas, alertas de stock parado. | Revisar. |
 | **6. IA de anuncios** | Generador de título/descripción, límite diario, registro de consumo. | Cuenta Anthropic + autorizar ~5 €. |
 | **7. Pulido y despliegue** | PWA, estados vacíos, errores, accesibilidad, rendimiento, textos legales básicos (privacidad/RGPD), despliegue en Vercel. | Cuenta Vercel + autorizar publicación. |

@@ -3,6 +3,7 @@ import Link from "next/link";
 
 import { AuthCard } from "@/components/auth-card";
 import { SignUpForm } from "./signup-form";
+import { ResetOnNavigate } from "@/components/reset-on-navigate";
 
 export const metadata: Metadata = { title: "Crear cuenta" };
 
@@ -20,7 +21,9 @@ export default function SignUpPage() {
         </>
       }
     >
-      <SignUpForm />
+      <ResetOnNavigate>
+        <SignUpForm />
+      </ResetOnNavigate>
     </AuthCard>
   );
 }

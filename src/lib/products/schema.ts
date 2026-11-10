@@ -5,7 +5,7 @@ import { CONDITIONS, EDITABLE_STATUSES } from "./labels";
 export const MAX_PHOTOS = 8;
 
 const UUID = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
-const UUID_RE = new RegExp(`^${UUID}$`);
+export const UUID_RE = new RegExp(`^${UUID}$`);
 
 /** Ruta de una foto en el almacenamiento: <usuario>/<producto>/<foto>.jpg */
 export function photoPath(userId: string, productId: string, photoId: string) {
@@ -16,7 +16,7 @@ export function isOwnPhotoPath(path: string, userId: string, productId: string) 
   return new RegExp(`^${userId}/${productId}/${UUID}\\.jpg$`).test(path);
 }
 
-const optionalText = (max: number) =>
+export const optionalText = (max: number) =>
   z
     .string()
     .trim()
@@ -24,7 +24,7 @@ const optionalText = (max: number) =>
     .transform((value) => value || null);
 
 /** Importe con coma o punto decimal: "12", "12,5", "12.50". */
-const money = (required: boolean) =>
+export const money = (required: boolean) =>
   z
     .string()
     .trim()
@@ -36,7 +36,7 @@ const money = (required: boolean) =>
     )
     .transform((value) => (value === "" ? null : Number(value)));
 
-const optionalDate = z
+export const optionalDate = z
   .string()
   .trim()
   .refine((value) => value === "" || /^\d{4}-\d{2}-\d{2}$/.test(value), "Fecha no válida.")

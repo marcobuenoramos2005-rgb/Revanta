@@ -4,6 +4,7 @@ import { Suspense } from "react";
 
 import { AuthCard } from "@/components/auth-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ResetOnNavigate } from "@/components/reset-on-navigate";
 import { LoginForm } from "./login-form";
 
 export const metadata: Metadata = { title: "Iniciar sesión" };
@@ -32,7 +33,11 @@ export default function LoginPage({ searchParams }: PageProps<"/login">) {
 async function LoginFormWithParams({ searchParams }: Pick<PageProps<"/login">, "searchParams">) {
   const params = await searchParams;
   const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
-  return <LoginForm next={first(params.next)} errorCode={first(params.error)} />;
+  return (
+    <ResetOnNavigate>
+      <LoginForm next={first(params.next)} errorCode={first(params.error)} />
+    </ResetOnNavigate>
+  );
 }
 
 function FormSkeleton() {

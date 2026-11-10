@@ -6,6 +6,7 @@ import { ProductForm } from "@/components/products/product-form";
 import { getProfile, requireUser } from "@/lib/auth/dal";
 import { currencySymbol } from "@/lib/format";
 import { getProduct } from "@/lib/products/queries";
+import { ResetOnNavigate } from "@/components/reset-on-navigate";
 
 export const metadata: Metadata = { title: "Editar producto" };
 
@@ -20,28 +21,30 @@ export default async function EditProductPage({ params }: PageProps<"/inventario
   return (
     <>
       <PageHeader title="Editar producto" description={product.title} />
-      <ProductForm
-        mode="edit"
-        userId={user.id}
-        productId={product.id}
-        currencySymbol={currencySymbol(profile.currency)}
-        isSold={product.status === "sold"}
-        initialPhotos={product.photos}
-        values={{
-          title: product.title,
-          brand: product.brand ?? "",
-          category: product.category ?? "",
-          size: product.size ?? "",
-          color: product.color ?? "",
-          condition: product.condition ?? "",
-          status: product.status === "sold" ? "in_stock" : product.status,
-          purchasePrice: money(product.purchase_price),
-          purchaseDate: product.purchase_date ?? "",
-          purchaseSource: product.purchase_source ?? "",
-          listedPrice: money(product.listed_price),
-          notes: product.notes ?? "",
-        }}
-      />
+      <ResetOnNavigate>
+        <ProductForm
+          mode="edit"
+          userId={user.id}
+          productId={product.id}
+          currencySymbol={currencySymbol(profile.currency)}
+          isSold={product.status === "sold"}
+          initialPhotos={product.photos}
+          values={{
+            title: product.title,
+            brand: product.brand ?? "",
+            category: product.category ?? "",
+            size: product.size ?? "",
+            color: product.color ?? "",
+            condition: product.condition ?? "",
+            status: product.status === "sold" ? "in_stock" : product.status,
+            purchasePrice: money(product.purchase_price),
+            purchaseDate: product.purchase_date ?? "",
+            purchaseSource: product.purchase_source ?? "",
+            listedPrice: money(product.listed_price),
+            notes: product.notes ?? "",
+          }}
+        />
+      </ResetOnNavigate>
     </>
   );
 }

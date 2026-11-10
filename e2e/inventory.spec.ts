@@ -155,3 +155,16 @@ test("un usuario no puede ver ni editar los productos de otro", async ({ page })
   await page.goto("/inventario");
   await expect(page.getByRole("heading", { name: "Tu inventario está vacío" })).toBeVisible();
 });
+
+test("los formularios empiezan vacíos al volver a abrirlos", async ({ page }) => {
+  await signUpAndConfirm(page);
+  await createProduct(page, { title: "Primer producto", price: "5" });
+
+  // Navegación dentro de la app (sin recargar): Inventario → Añadir producto.
+  await page.getByRole("link", { name: "Inventario", exact: true }).filter({ visible: true }).first().click();
+  await page.getByRole("link", { name: "Añadir producto" }).filter({ visible: true }).click();
+  await expect(page.getByRole("heading", { level: 1, name: "Añadir producto" })).toBeVisible();
+  const title = page.getByLabel("Título").filter({ visible: true });
+  await expect(title).toHaveValue("");
+  await expect(page.getByLabel(/Precio de compra/).filter({ visible: true })).toHaveValue("");
+});

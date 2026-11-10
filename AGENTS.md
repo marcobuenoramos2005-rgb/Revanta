@@ -17,6 +17,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Cualquier cambio en la base de datos va en una migración nueva en `supabase/migrations/`, con RLS y pruebas en `supabase/tests/database/`. Después ejecuta `npm run db:types`.
 - Cache Components está activado: las lecturas de sesión/cookies deben ir dentro de `<Suspense>`; no uses `new Date()` en componentes prerenderizados sin `"use cache"`.
 - En rutas dinámicas (`[id]`), los componentes que usan `usePathname`/`useSearchParams` o leen `params` deben ir dentro de `<Suspense>`. Las páginas con carga progresiva responden 200 aunque llamen a `notFound()`.
+- Next.js conserva el estado de las páginas visitadas (Activity): envuelve cada formulario en `<ResetOnNavigate>` y envíalo con `onSubmit` + `startTransition` para no perder lo escrito tras un error. En las pruebas, usa selectores exactos o `.filter({ visible: true })`: las páginas ocultas siguen en el DOM.
+- Beneficio neto de un producto = venta − comisión − envío − compra − gastos asociados. Beneficio del mes = beneficio de las ventas del mes − gastos generales (sin producto) del mes. Suma siempre en céntimos (`sumMoney`).
 - Las fotos se comprimen en el navegador y se suben directamente a Storage (`<usuario>/<producto>/<foto>.jpg`); el servidor valida las rutas. Se muestran con URLs firmadas.
 - No inventes datos en la interfaz: si una función no existe aún, muéstralo con `ComingSoonBadge`.
 - Antes de subir cambios: `npm run lint && npm run typecheck && npm run build && npm run test:e2e && npm run db:test`.

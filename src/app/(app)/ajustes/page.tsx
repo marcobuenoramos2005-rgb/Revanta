@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import { PageHeader } from "@/components/app-shell/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ResetOnNavigate } from "@/components/reset-on-navigate";
 import { getProfile, requireUser } from "@/lib/auth/dal";
 import { DeleteAccountDialog, PasswordForm, ProfileForm } from "./settings-forms";
 
@@ -15,6 +16,7 @@ export default async function SettingsPage() {
     <>
       <PageHeader title="Ajustes" description="Tu cuenta y los datos de tu negocio." />
 
+      <ResetOnNavigate>
       <div className="grid max-w-2xl gap-6">
         <Card>
           <CardHeader>
@@ -50,6 +52,7 @@ export default async function SettingsPage() {
           </CardContent>
         </Card>
       </div>
+      </ResetOnNavigate>
     </>
   );
 }

@@ -1,18 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeftIcon, PencilIcon } from "lucide-react";
+import { ChevronLeftIcon, PencilIcon, PlusIcon, TagIcon, Undo2Icon } from "lucide-react";
 import { cn } from "cn";
 
 import { ComingSoonBadge } from "@/components/coming-soon-badge";
+import { ConfirmDialog } from "@/components/forms/confirm-dialog";
 import { DeleteProductDialog } from "@/components/products/delete-product-dialog";
 import { PhotoGallery } from "@/components/products/photo-gallery";
 import { StatusBadge } from "@/components/products/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { getProfile } from "@/lib/auth/dal";
-import { formatDate, formatMoney } from "@/lib/format";
+import { EXPENSE_CATEGORY_LABELS } from "@/lib/expenses/labels";
+import { listProductExpenses } from "@/lib/expenses/queries";
+import { formatDate, formatMoney, sumMoney } from "@/lib/format";
 import { CONDITION_LABELS, EDITABLE_STATUSES, STATUS_LABELS } from "@/lib/products/labels";
 import { getProduct } from "@/lib/products/queries";
+import { PLATFORM_LABELS } from "@/lib/sales/labels";
+import { getSaleByProduct } from "@/lib/sales/queries";
+import { deleteSale } from "../../ventas/actions";
 import { setProductStatus } from "../actions";
 
 export const metadata: Metadata = { title: "Producto" };
@@ -21,6 +27,11 @@ export default async function ProductPage({ params }: PageProps<"/inventario/[id
   const { id } = await params;
   const [product, profile] = await Promise.all([getProduct(id), getProfile()]);
   if (!product) notFound();
+  const [sale, expenses] = await Promise.all([getSaleByProduct(product.id), listProductExpenses(product.id)]);
+  const expensesTotal = sumMoney(expenses.map((e) => e.amount));
+  const netProfit = sale
+    ? sumMoney([sale.sale_price, -sale.platform_fee, -sale.shipping_cost, -product.purchase_price, -expensesTotal])
+    : null;
 
   const money = (value: number) => formatMoney(value, profile.currency);
   const expectedMargin =
@@ -60,7 +71,7 @@ export default async function ProductPage({ params }: PageProps<"/inventario/[id
               label="Precio de venta previsto"
               value={product.listed_price === null ? "—" : money(product.listed_price)}
             />
-            {expectedMargin !== null && (
+            {!sale && expectedMargin !== null && (
               <div className="col-span-2 rounded-2xl border bg-card p-4">
                 <dt className="text-sm text-muted-foreground">Margen previsto</dt>
                 <dd
@@ -77,6 +88,57 @@ export default async function ProductPage({ params }: PageProps<"/inventario/[id
               </div>
             )}
           </dl>
+
+          {sale && netProfit !== null ? (
+            <section aria-labelledby="venta" className="rounded-2xl border bg-card p-4">
+              <h2 id="venta" className="mb-3 text-base font-semibold">
+                Venta
+              </h2>
+              <dl className="space-y-1.5 text-sm">
+                <Line label="Vendido en" value={`${PLATFORM_LABELS[sale.platform]} · ${formatDate(sale.sale_date)}`} />
+                <Line label="Precio de venta" value={money(sale.sale_price)} />
+                <Line label="Comisión" value={sale.platform_fee ? `− ${money(sale.platform_fee)}` : "—"} />
+                <Line label="Envío pagado por ti" value={sale.shipping_cost ? `− ${money(sale.shipping_cost)}` : "—"} />
+                <Line label="Precio de compra" value={`− ${money(product.purchase_price)}`} />
+                <Line label="Gastos del producto" value={expensesTotal ? `− ${money(expensesTotal)}` : "—"} />
+                <div className="flex items-baseline justify-between gap-4 border-t pt-3">
+                  <dt className="font-medium">Beneficio neto</dt>
+                  <dd
+                    data-testid="net-profit"
+                    className={cn(
+                      "text-2xl font-semibold tabular-nums",
+                      netProfit >= 0 ? "text-success" : "text-destructive",
+                    )}
+                  >
+                    {money(netProfit)}
+                  </dd>
+                </div>
+              </dl>
+              {sale.notes && <p className="mt-3 text-sm whitespace-pre-wrap text-muted-foreground">{sale.notes}</p>}
+              <div className="mt-4 flex flex-wrap gap-2">
+                <Link href={`/inventario/${product.id}/venta`} className={buttonVariants({ variant: "outline" })}>
+                  <PencilIcon data-icon="inline-start" /> Editar venta
+                </Link>
+                <ConfirmDialog
+                  action={deleteSale}
+                  fields={{ productId: product.id }}
+                  trigger={
+                    <>
+                      <Undo2Icon data-icon="inline-start" /> Anular venta
+                    </>
+                  }
+                  title="¿Anular esta venta?"
+                  description="Se borrará la venta y el producto volverá a «En stock». El producto y sus gastos no se eliminan."
+                  confirmLabel="Anular venta"
+                  pendingLabel="Anulando…"
+                />
+              </div>
+            </section>
+          ) : (
+            <Link href={`/inventario/${product.id}/venta`} className={cn(buttonVariants({ size: "lg" }), "w-full")}>
+              <TagIcon data-icon="inline-start" /> Registrar venta
+            </Link>
+          )}
 
           {product.status !== "sold" && (
             <section aria-labelledby="situacion">
@@ -129,6 +191,43 @@ export default async function ProductPage({ params }: PageProps<"/inventario/[id
             </section>
           )}
 
+          <section aria-labelledby="gastos-producto">
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <h2 id="gastos-producto" className="text-sm font-medium">
+                Gastos de este producto
+                {expensesTotal > 0 && <span className="text-muted-foreground"> · {money(expensesTotal)}</span>}
+              </h2>
+              <Link
+                href={`/gastos/nuevo?producto=${product.id}`}
+                className={buttonVariants({ variant: "outline", size: "sm" })}
+              >
+                <PlusIcon data-icon="inline-start" /> Añadir gasto
+              </Link>
+            </div>
+            {expenses.length === 0 ? (
+              <p className="rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
+                Sin gastos asociados (envío, embalaje, arreglos…).
+              </p>
+            ) : (
+              <ul className="divide-y overflow-hidden rounded-2xl border bg-card">
+                {expenses.map((expense) => (
+                  <li key={expense.id}>
+                    <Link
+                      href={`/gastos/${expense.id}/editar?desde=producto`}
+                      className="flex items-center justify-between gap-4 px-4 py-3 text-sm transition-colors hover:bg-accent/40"
+                    >
+                      <span className="min-w-0 truncate">
+                        {expense.description || EXPENSE_CATEGORY_LABELS[expense.category]}
+                        <span className="text-muted-foreground"> · {formatDate(expense.expense_date)}</span>
+                      </span>
+                      <span className="shrink-0 font-medium tabular-nums">{money(expense.amount)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
           <div className="flex flex-wrap gap-2">
             <Link href={`/inventario/${product.id}/editar`} className={buttonVariants({ variant: "outline" })}>
               <PencilIcon data-icon="inline-start" /> Editar
@@ -137,9 +236,6 @@ export default async function ProductPage({ params }: PageProps<"/inventario/[id
           </div>
 
           <div className="space-y-2 rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
-            <p className="flex flex-wrap items-center justify-between gap-2">
-              Registrar la venta de este producto <ComingSoonBadge phase={4} />
-            </p>
             <p className="flex flex-wrap items-center justify-between gap-2">
               Generar el anuncio con IA <ComingSoonBadge phase={6} />
             </p>
@@ -155,6 +251,15 @@ function Stat({ label, value }: { label: string; value: string }) {
     <div className="rounded-2xl border bg-card p-4">
       <dt className="text-sm text-muted-foreground">{label}</dt>
       <dd className="text-xl font-semibold tabular-nums">{value}</dd>
+    </div>
+  );
+}
+
+function Line({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="text-right tabular-nums">{value}</dd>
     </div>
   );
 }

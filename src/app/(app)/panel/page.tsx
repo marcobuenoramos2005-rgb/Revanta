@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { getProfile, requireUser } from "@/lib/auth/dal";
 import { formatMoney } from "@/lib/format";
 import { getStockSummary } from "@/lib/products/queries";
+import { getMonthSummary } from "@/lib/sales/queries";
 
 export const metadata: Metadata = { title: "Panel" };
 
@@ -31,16 +32,14 @@ const steps: { title: string; description: string; href: string; icon: LucideIco
   {
     title: "Registra tus gastos",
     description: "Envíos, embalaje, transporte, comisiones…",
-    href: "/gastos",
+    href: "/gastos/nuevo",
     icon: ReceiptIcon,
-    phase: 4,
   },
   {
     title: "Registra una venta",
-    description: "Revanta calculará tu beneficio neto real.",
-    href: "/ventas",
+    description: "Abre un producto y pulsa «Registrar venta».",
+    href: "/inventario",
     icon: TagIcon,
-    phase: 4,
   },
   {
     title: "Crea un anuncio con IA",
@@ -53,11 +52,28 @@ const steps: { title: string; description: string; href: string; icon: LucideIco
 
 export default async function PanelPage() {
   await requireUser();
-  const [{ businessName, currency }, stock] = await Promise.all([getProfile(), getStockSummary()]);
+  const [{ businessName, currency }, stock, month] = await Promise.all([
+    getProfile(),
+    getStockSummary(),
+    getMonthSummary(),
+  ]);
 
   const kpis: { label: string; icon: LucideIcon; value?: string; hint?: string }[] = [
-    { label: "Beneficio neto del mes", icon: TrendingUpIcon, hint: "Disponible en la Fase 4" },
-    { label: "Ventas del mes", icon: CircleDollarSignIcon, hint: "Disponible en la Fase 4" },
+    {
+      label: "Beneficio neto del mes",
+      icon: TrendingUpIcon,
+      value: formatMoney(month.netProfit, currency),
+      hint:
+        month.generalExpenses > 0
+          ? `Tras ${formatMoney(month.generalExpenses, currency)} de gastos generales`
+          : "Lo vendido este mes menos todos sus costes",
+    },
+    {
+      label: "Ventas del mes",
+      icon: CircleDollarSignIcon,
+      value: formatMoney(month.revenue, currency),
+      hint: month.salesCount === 1 ? "1 venta" : `${month.salesCount} ventas`,
+    },
     {
       label: "Valor del stock",
       icon: BoxesIcon,
