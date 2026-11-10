@@ -1,6 +1,6 @@
 # REVANTA — Plan de producto y arquitectura (MVP)
 
-> Estado: **propuesta pendiente de aprobación**. No se ha creado ninguna cuenta, servicio ni gasto.
+> Estado: **plan aprobado (10/11/2026). Fase 1 completada.** No se ha creado ninguna cuenta externa ni se ha realizado ningún gasto.
 > Fecha: 10/11/2026
 
 ## 1. Inspección del entorno
@@ -112,7 +112,7 @@ Cada fase termina con: código en GitHub, pruebas ejecutadas por mí, capturas d
 | Fase | Contenido | Requiere de ti |
 |---|---|---|
 | **0. Aprobación** | Este documento. | Aprobar plan y responder preguntas abiertas. |
-| **1. Fundaciones** | Proyecto Next.js + TS + Tailwind + shadcn, sistema de diseño (colores, tipografía, logo provisional), layout responsive, Supabase local, migraciones SQL con RLS, pruebas de aislamiento entre usuarios, CI básica en GitHub Actions (lint + tests). | Nada (todo local). |
+| **1. Fundaciones** ✅ | Proyecto Next.js + TS + Tailwind + shadcn, sistema de diseño (colores, tipografía, logo provisional), layout responsive, Supabase local, migraciones SQL con RLS, pruebas de aislamiento entre usuarios, CI básica en GitHub Actions (lint + tests). | Nada (todo local). |
 | **2. Autenticación** | Registro, login, recuperación de contraseña, protección de rutas, perfil. | Crear proyecto Supabase al final de la fase. |
 | **3. Inventario** | CRUD de productos, fotos, búsqueda, filtros, estados. | Revisar capturas. |
 | **4. Gastos y ventas** | Registro de gastos y ventas, cálculo de beneficio neto por producto. | Revisar con 2–3 ejemplos reales tuyos. |

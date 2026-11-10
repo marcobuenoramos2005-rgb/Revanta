@@ -1,0 +1,21 @@
+<!-- BEGIN:nextjs-agent-rules -->
+
+## This is NOT the Next.js you know
+
+This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+
+This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
+
+<!-- END:nextjs-agent-rules -->
+
+## Reglas del proyecto Revanta
+
+- Interfaz y textos para el usuario en **español**. Código, nombres de tablas y columnas en inglés.
+- Diseño **mobile-first** (iPhone e iPad). Objetivos táctiles de al menos 40–44 px.
+- Los componentes de shadcn usan **Base UI**: se usa `render` en lugar de `asChild`. Para enlaces con aspecto de botón, aplica `buttonVariants()` a `<Link>`.
+- Todo acceso a datos pasa por Supabase con la clave pública y la sesión del usuario: **la seguridad la garantiza RLS**. No uses la clave `service_role` en la app.
+- Cualquier cambio en la base de datos va en una migración nueva en `supabase/migrations/`, con RLS y pruebas en `supabase/tests/database/`. Después ejecuta `npm run db:types`.
+- Cache Components está activado: las lecturas de sesión/cookies deben ir dentro de `<Suspense>`; no uses `new Date()` en componentes prerenderizados sin `"use cache"`.
+- No inventes datos en la interfaz: si una función no existe aún, muéstralo con `ComingSoonBadge`.
+- Antes de subir cambios: `npm run lint && npm run typecheck && npm run build && npm run test:e2e && npm run db:test`.
+- Sin conexión de red a Docker Hub en el entorno de Claude: usa `SUPABASE_INTERNAL_IMAGE_REGISTRY=ghcr.io` con los comandos de Supabase.

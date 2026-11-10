@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main, "claude/**"]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  app:
+    name: App (lint, tipos, build, e2e)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Valores de desarrollo local: no son secretos.
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-placeholder
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+
+  database:
+    name: Base de datos (migraciones, RLS, tipos)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Arrancar Postgres de Supabase y aplicar migraciones
+        run: npx supabase db start
+      - name: Pruebas de seguridad (RLS) y cálculo de beneficio
+        run: npx supabase test db
+      - name: Linter de seguridad de la base de datos
+        run: npx supabase db lint --level warning --fail-on warning
+      - name: Comprobar que los tipos TypeScript están actualizados
+        run: |
+          npx supabase gen types typescript --local > /tmp/database.types.ts
+          diff -u src/lib/supabase/database.types.ts /tmp/database.types.ts
