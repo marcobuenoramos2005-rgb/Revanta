@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { signUpAndConfirm } from "./support/auth";
+
 const sections = [
   { label: "Inventario", heading: "Inventario" },
   { label: "Ventas", heading: "Ventas" },
@@ -7,20 +9,20 @@ const sections = [
   { label: "Panel", heading: "Panel" },
 ];
 
-test("la página de inicio carga y lleva al panel", async ({ page }) => {
+test("la página de inicio carga y lleva al registro", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveTitle(/Revanta/);
   await expect(page.getByRole("heading", { level: 1 })).toContainText("bajo control");
-  await page.getByRole("link", { name: /Empezar ahora/ }).click();
-  await expect(page).toHaveURL(/\/panel$/);
-  await expect(page.getByRole("heading", { level: 1, name: "Panel" })).toBeVisible();
+  await page.getByRole("link", { name: /Empezar gratis/ }).click();
+  await expect(page).toHaveURL(/\/registro$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Crea tu cuenta" })).toBeVisible();
 });
 
 test("la navegación principal funciona en todos los tamaños", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
 
-  await page.goto("/panel");
+  await signUpAndConfirm(page);
   const nav = page.getByRole("navigation", { name: "Principal" }).filter({ visible: true });
 
   for (const { label, heading } of sections) {
@@ -35,7 +37,7 @@ test("la navegación principal funciona en todos los tamaños", async ({ page })
 test("en iPhone, el menú «Más» da acceso a Estadísticas y Ajustes", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "iphone", "Solo aplica a la barra inferior del iPhone");
 
-  await page.goto("/panel");
+  await signUpAndConfirm(page);
   await page.getByRole("button", { name: "Más" }).click();
   await page.getByRole("link", { name: "Estadísticas" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Estadísticas" })).toBeVisible();

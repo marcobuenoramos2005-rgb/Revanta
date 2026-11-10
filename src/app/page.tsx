@@ -58,8 +58,11 @@ export default function HomePage() {
           <Logo />
           <div className="flex items-center gap-2">
             <ThemeToggle />
-            <Link href="/panel" className={buttonVariants({ variant: "outline" })}>
+            <Link href="/login" className={buttonVariants({ variant: "ghost" })}>
               Entrar
+            </Link>
+            <Link href="/registro" className={cn(buttonVariants(), "hidden sm:inline-flex")}>
+              Crear cuenta
             </Link>
           </div>
         </div>
@@ -84,8 +87,8 @@ export default function HomePage() {
               usarse cómodamente desde tu iPhone o iPad.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <Link href="/panel" className={buttonVariants({ size: "lg" })}>
-                Empezar ahora <ArrowRightIcon data-icon="inline-end" />
+              <Link href="/registro" className={buttonVariants({ size: "lg" })}>
+                Empezar gratis <ArrowRightIcon data-icon="inline-end" />
               </Link>
               <a href="#funciones" className={buttonVariants({ size: "lg", variant: "outline" })}>
                 Ver funciones

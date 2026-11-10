@@ -13,14 +13,10 @@ permissions:
   contents: read
 
 jobs:
-  app:
-    name: App (lint, tipos, build, e2e)
+  quality:
+    name: Calidad (lint y tipos)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
-    env:
-      # Valores de desarrollo local: no son secretos.
-      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-placeholder
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -30,14 +26,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
-      - run: npm run build
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
 
-  database:
-    name: Base de datos (migraciones, RLS, tipos)
+  tests:
+    name: Pruebas (base de datos, seguridad y navegador)
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -45,9 +38,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Arrancar Postgres de Supabase y aplicar migraciones
-        run: npx supabase db start
-      - name: Pruebas de seguridad (RLS) y cálculo de beneficio
+
+      - name: Arrancar Supabase en local (Postgres, Auth, Storage, Mailpit)
+        run: npx supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,realtime
+
+      - name: Pruebas de seguridad (RLS), beneficio y borrado de cuenta
         run: npx supabase test db
       - name: Linter de seguridad de la base de datos
         run: npx supabase db lint --level warning --fail-on warning
@@ -55,3 +50,15 @@ jobs:
         run: |
           npx supabase gen types typescript --local > /tmp/database.types.ts
           diff -u src/lib/supabase/database.types.ts /tmp/database.types.ts
+
+      - name: Variables de entorno de Supabase local (valores de desarrollo, no secretos)
+        run: |
+          eval "$(npx supabase status -o env 2>/dev/null)"
+          echo "NEXT_PUBLIC_SUPABASE_URL=$API_URL" >> "$GITHUB_ENV"
+          echo "NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=$PUBLISHABLE_KEY" >> "$GITHUB_ENV"
+          echo "MAILPIT_URL=$MAILPIT_URL" >> "$GITHUB_ENV"
+
+      - run: npm run build
+      - run: npx playwright install --with-deps chromium
+      - name: Pruebas en navegador (iPhone, iPad, escritorio)
+        run: npm run test:e2e

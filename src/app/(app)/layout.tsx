@@ -1,9 +1,12 @@
+import { Suspense } from "react";
 import Link from "next/link";
 
 import { Logo, LogoMark } from "@/components/brand/logo";
 import { MobileNav } from "@/components/app-shell/mobile-nav";
 import { SidebarNav } from "@/components/app-shell/sidebar-nav";
+import { UserMenu } from "@/components/app-shell/user-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,8 +18,13 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <Logo className="hidden lg:inline-flex" />
         </Link>
         <SidebarNav />
-        <div className="mt-auto flex justify-center lg:justify-start lg:px-1">
-          <ThemeToggle />
+        <div className="mt-auto flex flex-col items-center gap-2 lg:items-stretch">
+          <div className="lg:px-1">
+            <ThemeToggle />
+          </div>
+          <Suspense fallback={<Skeleton className="size-9 rounded-full lg:h-13 lg:w-full lg:rounded-xl" />}>
+            <UserMenu variant="sidebar" />
+          </Suspense>
         </div>
       </aside>
 
@@ -27,16 +35,33 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
             <Link href="/panel" aria-label="Revanta, ir al panel">
               <Logo />
             </Link>
-            <ThemeToggle />
+            <div className="flex items-center gap-1">
+              <ThemeToggle />
+              <Suspense fallback={<Skeleton className="size-9 rounded-full" />}>
+                <UserMenu variant="header" />
+              </Suspense>
+            </div>
           </div>
         </header>
 
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-28 md:px-8 md:pt-10 md:pb-12">
-          {children}
+          <Suspense fallback={<PageSkeleton />}>{children}</Suspense>
         </main>
 
         <MobileNav />
       </div>
+    </div>
+  );
+}
+
+function PageSkeleton() {
+  return (
+    <div className="space-y-6" aria-busy="true" aria-label="Cargando">
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-5 w-72 max-w-full" />
+      </div>
+      <Skeleton className="h-56 w-full rounded-2xl" />
     </div>
   );
 }

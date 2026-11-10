@@ -143,7 +143,9 @@ isOneToOne: false
                 }
           }
           Functions: {
-            [_ in never]: never
+            "delete_own_account":
+{ Args: Record<PropertyKey, never>; Returns: undefined
+                           }
           }
           Enums: {
             "expense_category": "shipping"|"packaging"|"transport"|"platform_fees"|"subscriptions"|"supplies"|"other","product_condition": "new_with_tags"|"new"|"very_good"|"good"|"fair","product_status": "in_stock"|"listed"|"reserved"|"sold"|"archived","sales_platform": "vinted"|"wallapop"|"ebay"|"milanuncios"|"todocoleccion"|"in_person"|"other"

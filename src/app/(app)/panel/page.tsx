@@ -15,6 +15,7 @@ import {
 import { PageHeader } from "@/components/app-shell/page-header";
 import { ComingSoonBadge } from "@/components/coming-soon-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getProfile, requireUser } from "@/lib/auth/dal";
 
 export const metadata: Metadata = { title: "Panel" };
 
@@ -56,12 +57,15 @@ const steps: { title: string; description: string; href: string; icon: LucideIco
   },
 ];
 
-export default function PanelPage() {
+export default async function PanelPage() {
+  await requireUser();
+  const { businessName } = await getProfile();
+
   return (
     <>
       <PageHeader
         title="Panel"
-        description="El resumen de tu negocio de un vistazo."
+        description={businessName ? `Hola, ${businessName}. Este es el resumen de tu negocio.` : "El resumen de tu negocio de un vistazo."}
       />
 
       <section aria-label="Indicadores principales" className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
