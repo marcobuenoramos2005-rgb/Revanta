@@ -58,7 +58,11 @@ export async function deleteAccount(_prev: FormState, formData: FormData): Promi
   }
 
   const supabase = await createClient();
-  // Nota: cuando existan fotos (Fase 3), se borrarán del almacenamiento antes de este paso.
+  // Primero las fotos (el almacenamiento no se borra en cascada con la cuenta).
+  const { data: products } = await supabase.from("products").select("photo_paths");
+  const photos = (products ?? []).flatMap((p) => p.photo_paths);
+  if (photos.length) await supabase.storage.from("product-photos").remove(photos);
+
   const { error } = await supabase.rpc("delete_own_account");
   if (error) return { error: "No se ha podido eliminar la cuenta. Inténtalo de nuevo." };
 

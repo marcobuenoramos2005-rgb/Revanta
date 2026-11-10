@@ -16,6 +16,8 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Todo acceso a datos pasa por Supabase con la clave pública y la sesión del usuario: **la seguridad la garantiza RLS**. No uses la clave `service_role` en la app.
 - Cualquier cambio en la base de datos va en una migración nueva en `supabase/migrations/`, con RLS y pruebas en `supabase/tests/database/`. Después ejecuta `npm run db:types`.
 - Cache Components está activado: las lecturas de sesión/cookies deben ir dentro de `<Suspense>`; no uses `new Date()` en componentes prerenderizados sin `"use cache"`.
+- En rutas dinámicas (`[id]`), los componentes que usan `usePathname`/`useSearchParams` o leen `params` deben ir dentro de `<Suspense>`. Las páginas con carga progresiva responden 200 aunque llamen a `notFound()`.
+- Las fotos se comprimen en el navegador y se suben directamente a Storage (`<usuario>/<producto>/<foto>.jpg`); el servidor valida las rutas. Se muestran con URLs firmadas.
 - No inventes datos en la interfaz: si una función no existe aún, muéstralo con `ComingSoonBadge`.
 - Antes de subir cambios: `npm run lint && npm run typecheck && npm run build && npm run test:e2e && npm run db:test`.
 - Sin conexión de red a Docker Hub en el entorno de Claude: usa `SUPABASE_INTERNAL_IMAGE_REGISTRY=ghcr.io` con los comandos de Supabase.

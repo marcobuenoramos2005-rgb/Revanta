@@ -16,23 +16,17 @@ import { PageHeader } from "@/components/app-shell/page-header";
 import { ComingSoonBadge } from "@/components/coming-soon-badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { getProfile, requireUser } from "@/lib/auth/dal";
+import { formatMoney } from "@/lib/format";
+import { getStockSummary } from "@/lib/products/queries";
 
 export const metadata: Metadata = { title: "Panel" };
 
-const kpis: { label: string; icon: LucideIcon }[] = [
-  { label: "Beneficio neto del mes", icon: TrendingUpIcon },
-  { label: "Ventas del mes", icon: CircleDollarSignIcon },
-  { label: "Valor del stock", icon: BoxesIcon },
-  { label: "Productos en stock", icon: PackageIcon },
-];
-
-const steps: { title: string; description: string; href: string; icon: LucideIcon; phase: number }[] = [
+const steps: { title: string; description: string; href: string; icon: LucideIcon; phase?: number }[] = [
   {
     title: "Añade tu primer producto",
     description: "Registra lo que has comprado y cuánto te costó.",
-    href: "/inventario",
+    href: "/inventario/nuevo",
     icon: PackageIcon,
-    phase: 3,
   },
   {
     title: "Registra tus gastos",
@@ -59,7 +53,24 @@ const steps: { title: string; description: string; href: string; icon: LucideIco
 
 export default async function PanelPage() {
   await requireUser();
-  const { businessName } = await getProfile();
+  const [{ businessName, currency }, stock] = await Promise.all([getProfile(), getStockSummary()]);
+
+  const kpis: { label: string; icon: LucideIcon; value?: string; hint?: string }[] = [
+    { label: "Beneficio neto del mes", icon: TrendingUpIcon, hint: "Disponible en la Fase 4" },
+    { label: "Ventas del mes", icon: CircleDollarSignIcon, hint: "Disponible en la Fase 4" },
+    {
+      label: "Valor del stock",
+      icon: BoxesIcon,
+      value: formatMoney(stock.value, currency),
+      hint: "Lo que te costó lo que tienes sin vender",
+    },
+    {
+      label: "Productos en stock",
+      icon: PackageIcon,
+      value: String(stock.count),
+      hint: "En stock, publicados o reservados",
+    },
+  ];
 
   return (
     <>
@@ -69,17 +80,17 @@ export default async function PanelPage() {
       />
 
       <section aria-label="Indicadores principales" className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
-        {kpis.map(({ label, icon: Icon }) => (
+        {kpis.map(({ label, icon: Icon, value, hint }) => (
           <Card key={label} size="sm">
             <CardHeader>
               <CardDescription className="flex items-center justify-between gap-2">
                 <span className="leading-tight">{label}</span>
                 <Icon className="size-4 shrink-0 text-muted-foreground" />
               </CardDescription>
-              <CardTitle className="text-2xl font-semibold tabular-nums md:text-3xl">—</CardTitle>
+              <CardTitle className="text-2xl font-semibold tabular-nums md:text-3xl">{value ?? "—"}</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-xs text-muted-foreground">Sin datos todavía</p>
+              <p className="text-xs text-muted-foreground">{hint}</p>
             </CardContent>
           </Card>
         ))}
@@ -105,9 +116,11 @@ export default async function PanelPage() {
                   {title}
                 </p>
                 <p className="text-sm text-muted-foreground">{description}</p>
-                <div className="mt-2">
-                  <ComingSoonBadge phase={phase} />
-                </div>
+                {phase && (
+                  <div className="mt-2">
+                    <ComingSoonBadge phase={phase} />
+                  </div>
+                )}
               </div>
               <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
             </Link>

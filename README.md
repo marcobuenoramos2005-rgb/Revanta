@@ -3,7 +3,7 @@
 SaaS para pequeños y medianos revendedores de segunda mano: inventario, compras y gastos,
 ventas, beneficio neto, anuncios con IA y estadísticas, en un solo lugar.
 
-> Estado: **Fases 1 (fundaciones) y 2 (autenticación) completadas**. Plan completo en [`docs/PLAN.md`](docs/PLAN.md).
+> Estado: **Fases 1 (fundaciones), 2 (autenticación) y 3 (inventario) completadas**. Plan completo en [`docs/PLAN.md`](docs/PLAN.md).
 
 ## Tecnología
 

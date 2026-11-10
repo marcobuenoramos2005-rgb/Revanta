@@ -17,7 +17,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <LogoMark className="lg:hidden" />
           <Logo className="hidden lg:inline-flex" />
         </Link>
-        <SidebarNav />
+        <Suspense fallback={null}>
+          <SidebarNav />
+        </Suspense>
         <div className="mt-auto flex flex-col items-center gap-2 lg:items-stretch">
           <div className="lg:px-1">
             <ThemeToggle />
@@ -48,7 +50,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <Suspense fallback={<PageSkeleton />}>{children}</Suspense>
         </main>
 
-        <MobileNav />
+        <Suspense fallback={null}>
+          <MobileNav />
+        </Suspense>
       </div>
     </div>
   );
