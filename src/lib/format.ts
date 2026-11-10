@@ -47,3 +47,38 @@ export function sumMoney(values: (number | null | undefined)[]) {
 export function moneyInput(value: number | null | undefined) {
   return value === null || value === undefined ? "" : value.toFixed(2).replace(".", ",");
 }
+
+/** Días entre dos fechas ISO (AAAA-MM-DD): b − a. */
+export function daysBetween(a: string, b: string) {
+  const toUTC = (iso: string) => {
+    const [y, m, d] = iso.slice(0, 10).split("-").map(Number);
+    return Date.UTC(y, m - 1, d);
+  };
+  return Math.round((toUTC(b) - toUTC(a)) / 86_400_000);
+}
+
+/** Porcentaje con un decimal como máximo: 0.456 → "45,6 %". */
+export function formatPercent(ratio: number) {
+  return new Intl.NumberFormat("es-ES", { style: "percent", maximumFractionDigits: 1 }).format(ratio);
+}
+
+/** Claves "AAAA-MM" de los últimos `count` meses, del más antiguo al actual. */
+export function lastMonths(count: number): string[] {
+  const [year, month] = todayISO().split("-").map(Number);
+  return Array.from({ length: count }, (_, i) => {
+    const date = new Date(Date.UTC(year, month - 1 - (count - 1 - i), 1));
+    return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, "0")}`;
+  });
+}
+
+/** "2026-11" → "nov" (o "nov 26" con año). */
+export function monthLabel(key: string, withYear = false) {
+  const [year, month] = key.split("-").map(Number);
+  return new Intl.DateTimeFormat("es-ES", {
+    month: "short",
+    ...(withYear ? { year: "2-digit" } : {}),
+    timeZone: "UTC",
+  })
+    .format(new Date(Date.UTC(year, month - 1, 1)))
+    .replace(".", "");
+}
