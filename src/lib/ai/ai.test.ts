@@ -23,7 +23,8 @@ const usage = { input_tokens: 600, output_tokens: 400 };
 
 /** Cliente falso: nunca hace peticiones de red. */
 function fakeClient(response: unknown) {
-  const parse = vi.fn(async () => {
+  const parse = vi.fn(async (_request: unknown) => {
+    void _request;
     if (response instanceof Error) throw response;
     return response;
   });
@@ -38,10 +39,8 @@ const ok = (parsed_output: unknown, extra: Record<string, unknown> = {}) => ({
   ...extra,
 });
 
-const apiError = <T extends Anthropic.APIError>(
-  ErrorClass: new (status: never, error: never, message: string, headers: never) => T,
-  status: number,
-) => new ErrorClass(status as never, { type: "error" } as never, "boom", new Headers({ "request-id": "req_123" }) as never);
+const apiError = <T>(ErrorClass: new (...args: never[]) => T, status: number) =>
+  new ErrorClass(...([status, { type: "error" }, "boom", new Headers({ "request-id": "req_123" })] as never[]));
 
 beforeEach(() => {
   vi.spyOn(console, "error").mockImplementation(() => {});
@@ -132,7 +131,13 @@ describe("generateListing (cliente simulado, sin red)", () => {
     });
 
     expect(parse).toHaveBeenCalledTimes(1);
-    const request = parse.mock.calls[0][0] as Record<string, any>;
+    const request = parse.mock.calls[0][0] as {
+      model: string;
+      max_tokens: number;
+      output_config: { effort: string; format: unknown };
+      system: string;
+      messages: { content: string }[];
+    };
     expect(request.model).toBe("claude-haiku-5-5");
     expect(request.max_tokens).toBe(AI_MAX_OUTPUT_TOKENS);
     expect(request.output_config.effort).toBe("low");

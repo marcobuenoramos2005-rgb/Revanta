@@ -17,8 +17,15 @@ export default defineConfig({
   ],
   webServer: {
     command: "npm run start",
+    env: {
+      // Las pruebas NUNCA llaman a la API real: sin clave y con respuestas simuladas.
+      ANTHROPIC_API_KEY: "",
+      AI_MOCK: "1",
+      AI_DAILY_LIMIT: "3",
+    },
     url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
+    // Siempre arranca su propio servidor para garantizar el entorno anterior.
+    reuseExistingServer: false,
     timeout: 60_000,
   },
 });

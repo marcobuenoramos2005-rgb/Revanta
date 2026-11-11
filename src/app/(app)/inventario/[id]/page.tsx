@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ChevronLeftIcon, PencilIcon, PlusIcon, TagIcon, Undo2Icon } from "lucide-react";
+import { ChevronLeftIcon, PencilIcon, PlusIcon, SparklesIcon, TagIcon, Undo2Icon } from "lucide-react";
 import { cn } from "cn";
 
-import { ComingSoonBadge } from "@/components/coming-soon-badge";
 import { ConfirmDialog } from "@/components/forms/confirm-dialog";
 import { DeleteProductDialog } from "@/components/products/delete-product-dialog";
 import { PhotoGallery } from "@/components/products/photo-gallery";
@@ -235,11 +234,20 @@ export default async function ProductPage({ params }: PageProps<"/inventario/[id
             <DeleteProductDialog id={product.id} title={product.title} />
           </div>
 
-          <div className="space-y-2 rounded-2xl border border-dashed p-4 text-sm text-muted-foreground">
-            <p className="flex flex-wrap items-center justify-between gap-2">
-              Generar el anuncio con IA <ComingSoonBadge phase={6} />
-            </p>
-          </div>
+          <Link
+            href={`/inventario/${product.id}/anuncio`}
+            className="group flex items-center gap-4 rounded-2xl border bg-card p-4 transition-colors hover:border-primary/40 hover:bg-accent/40"
+          >
+            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent text-primary">
+              <SparklesIcon className="size-5" />
+            </span>
+            <span className="min-w-0 flex-1">
+              <span className="block font-medium">Generar anuncio con IA</span>
+              <span className="block text-sm text-muted-foreground">
+                Título y descripción listos para copiar y pegar.
+              </span>
+            </span>
+          </Link>
         </div>
       </div>
     </>

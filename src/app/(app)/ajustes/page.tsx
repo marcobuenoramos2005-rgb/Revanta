@@ -3,6 +3,8 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/app-shell/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ResetOnNavigate } from "@/components/reset-on-navigate";
+import { formatUsd } from "@/lib/ai/cost";
+import { getAiUsage } from "@/lib/ai/service";
 import { getProfile, requireUser } from "@/lib/auth/dal";
 import { DeleteAccountDialog, PasswordForm, ProfileForm } from "./settings-forms";
 
@@ -10,7 +12,7 @@ export const metadata: Metadata = { title: "Ajustes" };
 
 export default async function SettingsPage() {
   const user = await requireUser();
-  const profile = await getProfile();
+  const [profile, ai] = await Promise.all([getProfile(), getAiUsage()]);
 
   return (
     <>
@@ -37,6 +39,39 @@ export default async function SettingsPage() {
           </CardHeader>
           <CardContent>
             <PasswordForm />
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Anuncios con IA</CardTitle>
+            <CardDescription>
+              {ai.mode === "live"
+                ? "Tu consumo de generación de anuncios."
+                : ai.mode === "mock"
+                  ? "Modo de prueba: los textos son simulados y no tienen coste."
+                  : "La generación con IA todavía no está activada."}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <dl className="grid gap-3 text-sm sm:grid-cols-3">
+              <div>
+                <dt className="text-muted-foreground">Últimas 24 horas</dt>
+                <dd className="font-medium tabular-nums">
+                  {ai.usedToday} de {ai.limit} anuncios
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Este mes</dt>
+                <dd className="font-medium tabular-nums">
+                  {ai.monthCount === 1 ? "1 anuncio" : `${ai.monthCount} anuncios`}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-muted-foreground">Coste estimado del mes</dt>
+                <dd className="font-medium tabular-nums">{formatUsd(ai.monthCostUsd)}</dd>
+              </div>
+            </dl>
           </CardContent>
         </Card>
 

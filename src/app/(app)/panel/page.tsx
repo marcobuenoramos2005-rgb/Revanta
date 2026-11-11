@@ -48,10 +48,9 @@ const steps: { title: string; description: string; href: string; icon: LucideIco
   },
   {
     title: "Crea un anuncio con IA",
-    description: "Título y descripción listos para copiar y pegar.",
+    description: "Abre un producto y pulsa «Generar anuncio con IA».",
     href: "/inventario",
     icon: SparklesIcon,
-    phase: 6,
   },
 ];
 
