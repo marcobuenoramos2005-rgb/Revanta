@@ -3,7 +3,7 @@
 > Este archivo se actualiza al terminar cada fase (y en cada parada intermedia).
 > Sirve para retomar el trabajo exactamente donde se dejó, también en una sesión nueva.
 
-**Última actualización:** 10/11/2026 — antes de empezar la Fase 5.
+**Última actualización:** 11/11/2026 — Fase 5 terminada.
 
 ## Dónde está el código
 
@@ -19,14 +19,14 @@
 | 2. Autenticación | Registro, login, recuperar contraseña, ajustes, borrar cuenta | ✅ |
 | 3. Inventario | Productos con fotos, búsqueda, filtros, situación | ✅ |
 | 4. Gastos y ventas | Ventas, gastos, beneficio neto por producto y por mes | ✅ |
+| 5. Panel y estadísticas | Beneficio por mes, plataforma y categoría; margen; días hasta la venta; stock parado; últimas ventas | ✅ |
 
-Pruebas en el último commit: 91 de navegador (iPhone, iPad, escritorio) y 37 de base de datos, todas en verde, también en GitHub Actions.
+Pruebas en el último commit: 97 de navegador (iPhone, iPad, escritorio) y 37 de base de datos, todas en verde, también en GitHub Actions.
 
 ## Pendiente
 
 | Fase | Contenido | Necesita del propietario |
 |---|---|---|
-| 5. Panel y estadísticas | Gráficas por mes/plataforma/categoría, margen medio, días hasta la venta, avisos de stock parado | Nada |
 | 6. IA de anuncios | Título y descripción con la API de Claude, límite diario | Cuenta de Anthropic y autorizar ~5 € |
 | 7. Pulido y despliegue | PWA, textos legales, email de producción, Vercel | Cuenta de Vercel y autorizar publicación |
 
@@ -42,6 +42,8 @@ Pruebas en el último commit: 91 de navegador (iPhone, iPad, escritorio) y 37 de
 - Listas (inventario, ventas, gastos) limitadas a los 200 registros más recientes, sin paginación; los totales de Ventas y Gastos suman solo lo mostrado.
 - Si falla el guardado de un producto tras subir fotos, pueden quedar fotos huérfanas en el almacenamiento (limpieza prevista en la Fase 7).
 - Una venta por producto (sin lotes ni cantidades).
+- Las estadísticas se calculan en la app con un máximo de 1.000 ventas por periodo (se muestra un aviso si se supera). Para más volumen habrá que agregar en la base de datos.
+- «Tiempo medio hasta vender» solo cuenta productos con fecha de compra. El «stock parado» usa la fecha de compra o, si falta, la de alta.
 - Probado en Chromium con tamaños de iPhone/iPad, no en Safari real: cámara y fotos HEIC pendientes de probar en un dispositivo.
 - El plan gratuito de Vercel no permite uso comercial y el email gratuito de Supabase es solo para pruebas (decisiones para la Fase 7).
 
