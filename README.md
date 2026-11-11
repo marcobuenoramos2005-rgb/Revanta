@@ -57,6 +57,7 @@ Mailpit: http://127.0.0.1:54324
 | `npm run typecheck` | Comprueba los tipos de TypeScript |
 | `npm run build` | Compila la versión de producción |
 | `npm run test:unit` | Pruebas unitarias (IA con cliente simulado) |
+| `npm run supabase:check` | Comprueba el proyecto real de Supabase con la clave pública (`-- --local` para el local) |
 | `npm run ai:check` | Comprueba la clave de Anthropic sin coste |
 | `npm run test:e2e` | Pruebas de navegación (iPhone, iPad, escritorio) |
 | `npm run db:test` | Pruebas de seguridad RLS y de cálculo de beneficio |

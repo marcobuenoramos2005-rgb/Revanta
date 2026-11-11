@@ -3,7 +3,7 @@
 > Este archivo se actualiza al terminar cada fase (y en cada parada intermedia).
 > Sirve para retomar el trabajo exactamente donde se dejó, también en una sesión nueva.
 
-**Última actualización:** 11/11/2026 — Fase 6 construida y probada con respuestas simuladas (sin clave, sin gasto).
+**Última actualización:** 11/11/2026 — Conectando el proyecto real de Supabase; iniciada la Fase 7 (preparación para producción).
 
 ## Dónde está el código
 
@@ -22,7 +22,27 @@
 | 5. Panel y estadísticas | Beneficio por mes, plataforma y categoría; margen; días hasta la venta; stock parado; últimas ventas | ✅ |
 | 6. IA de anuncios | Integración con Claude Haiku 5.5 solo en servidor, límite diario, registro de consumo y coste, modo simulado | ✅ construida · ⏳ sin probar con la IA real |
 
-Pruebas en el último commit: 27 unitarias (IA con cliente simulado), 106 de navegador (iPhone, iPad, escritorio) y 37 de base de datos, todas en verde, también en GitHub Actions.
+Pruebas en el último commit: 27 unitarias (IA con cliente simulado), 112 de navegador (iPhone, iPad, escritorio) y 37 de base de datos, todas en verde, también en GitHub Actions.
+
+## Supabase real (en curso)
+
+- Proyecto: `https://moiohmhnvymuiucdxtpg.supabase.co` (acceso de red ya permitido en el entorno de Claude «Revanta»).
+- ✅ Archivo SQL 1 (`20261110000000_initial_schema.sql`) ejecutado por el propietario en el SQL Editor. **Nota:** se ejecutó antes o después del commit `454d449` (permisos explícitos); `npm run supabase:check` lo aclara.
+- ⏳ Archivo SQL 2 (`20261110120000_delete_own_account.sql`): entregado al propietario, pendiente de ejecutar.
+- ⏳ Falta que el propietario pegue la *Publishable key* en el chat → guardarla en `.env.real.local` (no se sube a git) junto con la URL y ejecutar `npm run supabase:check`.
+- ⏳ Después: configurar Auth (paso 4 de `CONFIGURAR-SUPABASE.md`) y prueba completa con sesión (incluye confirmar que el almacén de fotos es privado).
+- El propietario eligió la opción A: ejecuta él el SQL; **no** quiere tokens de acceso ni claves secretas.
+
+## Fase 7 (en curso)
+
+- ✅ Cabeceras de seguridad, sin `X-Powered-By`, pantallas de error (`error.tsx`), pruebas de seguridad.
+- ⏳ Pendiente: textos legales (necesitan los datos del titular), paginación, limpieza de fotos huérfanas, email de producción, despliegue en Vercel.
+
+## Ampliaciones pedidas por el propietario (11/11/2026)
+
+- Suscripciones y planes de pago (Stripe): **pendiente de decisiones** (precios, límites del plan gratuito, forma jurídica para facturar). No construir sin su respuesta.
+- «IA para analizar productos»: pendiente de definir el alcance con él.
+- Objetivo comercial: primeros 20 usuarios en España.
 
 ## Pendiente
 
