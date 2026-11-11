@@ -28,8 +28,10 @@ Pruebas en el último commit: 27 unitarias (IA con cliente simulado), 112 de nav
 
 - Proyecto: `https://moiohmhnvymuiucdxtpg.supabase.co` (acceso de red ya permitido en el entorno de Claude «Revanta»).
 - ✅ Archivo SQL 1 (`20261110000000_initial_schema.sql`) ejecutado por el propietario en el SQL Editor. **Nota:** se ejecutó antes o después del commit `454d449` (permisos explícitos); `npm run supabase:check` lo aclara.
-- ⏳ Archivo SQL 2 (`20261110120000_delete_own_account.sql`): entregado al propietario, pendiente de ejecutar.
-- ⏳ Falta que el propietario pegue la *Publishable key* en el chat → guardarla en `.env.real.local` (no se sube a git) junto con la URL y ejecutar `npm run supabase:check`.
+- ✅ Archivo SQL 2 ejecutado por el propietario (Success).
+- ✅ URL y *Publishable key* guardadas en `.env.real.local` (no se sube a git; si falta, pedírselas de nuevo: son públicas).
+- ✅ `npm run supabase:check` contra el proyecto real: 13 de 13 correctas (tablas, función, anónimos sin acceso, confirmación de email activada).
+- ⏳ Pendiente de confirmar qué versión del archivo 1 se ejecutó (permisos explícitos o no): consulta de solo lectura entregada al propietario.
 - ⏳ Después: configurar Auth (paso 4 de `CONFIGURAR-SUPABASE.md`) y prueba completa con sesión (incluye confirmar que el almacén de fotos es privado).
 - El propietario eligió la opción A: ejecuta él el SQL; **no** quiere tokens de acceso ni claves secretas.
 
