@@ -246,6 +246,15 @@ alter table public.ai_generations enable row level security;
 revoke all on public.profiles, public.products, public.expenses, public.sales,
   public.ai_generations, public.product_profit from anon;
 
+-- Permisos explícitos para usuarios con sesión (no dependen de los valores por
+-- defecto del proyecto). RLS decide además sobre qué filas puede actuar cada uno.
+revoke all on public.profiles, public.products, public.expenses, public.sales,
+  public.ai_generations, public.product_profit from authenticated;
+grant select, update on public.profiles to authenticated;
+grant select, insert, update, delete on public.products, public.expenses, public.sales to authenticated;
+grant select, insert on public.ai_generations to authenticated;
+grant select on public.product_profit to authenticated;
+
 -- profiles: el perfil se crea automáticamente; el usuario solo puede verlo y editarlo.
 create policy "profiles_select_own" on public.profiles
   for select to authenticated using ((select auth.uid()) = id);
@@ -292,7 +301,6 @@ create policy "ai_generations_select_own" on public.ai_generations
   for select to authenticated using ((select auth.uid()) = user_id);
 create policy "ai_generations_insert_own" on public.ai_generations
   for insert to authenticated with check ((select auth.uid()) = user_id);
-revoke update, delete on public.ai_generations from authenticated;
 
 -- =============================================================================
 -- Almacenamiento de fotos: bucket privado, una carpeta por usuario (<user_id>/...)
