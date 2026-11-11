@@ -59,7 +59,7 @@ test("genera un anuncio (simulado), lo copia, lo guarda en el historial y cuenta
   const card = page.locator("[data-slot=card]").filter({ hasText: "Anuncios con IA" });
   await expect(card).toContainText("1 de 3 anuncios");
   await expect(card).toContainText("1 anuncio");
-  await expect(card).toContainText(/0,00\s\$/);
+  await expect(card).toContainText(/0,00\sUS\$/);
 });
 
 test("aplica el límite diario por usuario", async ({ page }) => {

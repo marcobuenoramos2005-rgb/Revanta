@@ -14,7 +14,8 @@
     "db:test": "supabase test db",
     "db:types": "supabase gen types typescript --local > src/lib/supabase/database.types.ts",
     "test:e2e": "playwright test --trace off",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "ai:check": "node --env-file-if-exists=.env.local scripts/ai-check.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^1.8.0",

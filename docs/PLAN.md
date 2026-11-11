@@ -1,6 +1,6 @@
 # REVANTA — Plan de producto y arquitectura (MVP)
 
-> Estado: **plan aprobado (10/11/2026). Fases 1 a 5 completadas.** No se ha creado ninguna cuenta externa ni se ha realizado ningún gasto.
+> Estado: **plan aprobado (10/11/2026). Fases 1 a 5 completadas; Fase 6 construida con respuestas simuladas (pendiente de probar con la IA real).** No se ha creado ninguna cuenta externa ni se ha realizado ningún gasto.
 > Fecha: 10/11/2026
 
 ## 1. Inspección del entorno

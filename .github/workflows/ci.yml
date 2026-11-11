@@ -26,6 +26,8 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      - name: Pruebas unitarias (IA con cliente simulado, sin llamadas reales)
+        run: npm run test:unit
 
   tests:
     name: Pruebas (base de datos, seguridad y navegador)

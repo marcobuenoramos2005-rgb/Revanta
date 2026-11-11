@@ -3,7 +3,7 @@
 SaaS para pequeños y medianos revendedores de segunda mano: inventario, compras y gastos,
 ventas, beneficio neto, anuncios con IA y estadísticas, en un solo lugar.
 
-> Estado: **Fases 1 a 5 completadas** (fundaciones, autenticación, inventario, gastos y ventas, panel y estadísticas). Estado detallado en [`docs/ESTADO.md`](docs/ESTADO.md). Plan completo en [`docs/PLAN.md`](docs/PLAN.md).
+> Estado: **Fases 1 a 5 completadas** (fundaciones, autenticación, inventario, gastos y ventas, panel y estadísticas). Fase 6 (IA) construida con respuestas simuladas. Estado detallado en [`docs/ESTADO.md`](docs/ESTADO.md). Plan completo en [`docs/PLAN.md`](docs/PLAN.md).
 
 ## Tecnología
 
@@ -56,6 +56,8 @@ Mailpit: http://127.0.0.1:54324
 | `npm run lint` | Revisa el estilo del código |
 | `npm run typecheck` | Comprueba los tipos de TypeScript |
 | `npm run build` | Compila la versión de producción |
+| `npm run test:unit` | Pruebas unitarias (IA con cliente simulado) |
+| `npm run ai:check` | Comprueba la clave de Anthropic sin coste |
 | `npm run test:e2e` | Pruebas de navegación (iPhone, iPad, escritorio) |
 | `npm run db:test` | Pruebas de seguridad RLS y de cálculo de beneficio |
 | `npm run db:reset` | Recrea la base de datos local aplicando las migraciones |

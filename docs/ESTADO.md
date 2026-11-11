@@ -3,7 +3,7 @@
 > Este archivo se actualiza al terminar cada fase (y en cada parada intermedia).
 > Sirve para retomar el trabajo exactamente donde se dejó, también en una sesión nueva.
 
-**Última actualización:** 11/11/2026 — Fase 5 terminada.
+**Última actualización:** 11/11/2026 — Fase 6 construida y probada con respuestas simuladas (sin clave, sin gasto).
 
 ## Dónde está el código
 
@@ -20,14 +20,15 @@
 | 3. Inventario | Productos con fotos, búsqueda, filtros, situación | ✅ |
 | 4. Gastos y ventas | Ventas, gastos, beneficio neto por producto y por mes | ✅ |
 | 5. Panel y estadísticas | Beneficio por mes, plataforma y categoría; margen; días hasta la venta; stock parado; últimas ventas | ✅ |
+| 6. IA de anuncios | Integración con Claude Haiku 5.5 solo en servidor, límite diario, registro de consumo y coste, modo simulado | ✅ construida · ⏳ sin probar con la IA real |
 
-Pruebas en el último commit: 97 de navegador (iPhone, iPad, escritorio) y 37 de base de datos, todas en verde, también en GitHub Actions.
+Pruebas en el último commit: 27 unitarias (IA con cliente simulado), 106 de navegador (iPhone, iPad, escritorio) y 37 de base de datos, todas en verde, también en GitHub Actions.
 
 ## Pendiente
 
 | Fase | Contenido | Necesita del propietario |
 |---|---|---|
-| 6. IA de anuncios | Título y descripción con la API de Claude, límite diario | Cuenta de Anthropic y autorizar ~5 € |
+| 6b. Pruebas con IA real | Conectar la clave, generar 5–10 anuncios reales y ajustar el texto | Cuenta de Anthropic, crédito de 5 $ sin recarga automática y su visto bueno ([`CONFIGURAR-ANTHROPIC.md`](CONFIGURAR-ANTHROPIC.md)) |
 | 7. Pulido y despliegue | PWA, textos legales, email de producción, Vercel | Cuenta de Vercel y autorizar publicación |
 
 **Acción pendiente del propietario:** crear el proyecto de Supabase y pasar la *Project URL* y la *Publishable key* (pasos en [`CONFIGURAR-SUPABASE.md`](CONFIGURAR-SUPABASE.md)). Después hay que aplicar las migraciones y la configuración de Auth al proyecto (requiere su aprobación).
@@ -35,6 +36,7 @@ Pruebas en el último commit: 97 de navegador (iPhone, iPad, escritorio) y 37 de
 ## Gastos y cuentas
 
 - Gasto total hasta ahora: **0 €**.
+- Presupuesto autorizado para pruebas de IA: **máximo 5 €, aún sin gastar, sin recarga automática**. No se ha hecho ninguna llamada real a la API.
 - Cuentas externas creadas: ninguna (solo GitHub, que ya existía).
 
 ## Problemas conocidos y limitaciones
@@ -42,6 +44,7 @@ Pruebas en el último commit: 97 de navegador (iPhone, iPad, escritorio) y 37 de
 - Listas (inventario, ventas, gastos) limitadas a los 200 registros más recientes, sin paginación; los totales de Ventas y Gastos suman solo lo mostrado.
 - Si falla el guardado de un producto tras subir fotos, pueden quedar fotos huérfanas en el almacenamiento (limpieza prevista en la Fase 7).
 - Una venta por producto (sin lotes ni cantidades).
+- IA: calidad real de los textos sin probar; el límite es por usuario (el tope global es el crédito prepago y el límite de gasto en la consola de Anthropic).
 - Las estadísticas se calculan en la app con un máximo de 1.000 ventas por periodo (se muestra un aviso si se supera). Para más volumen habrá que agregar en la base de datos.
 - «Tiempo medio hasta vender» solo cuenta productos con fecha de compra. El «stock parado» usa la fecha de compra o, si falta, la de alta.
 - Probado en Chromium con tamaños de iPhone/iPad, no en Safari real: cámara y fotos HEIC pendientes de probar en un dispositivo.
@@ -57,8 +60,9 @@ Pruebas en el último commit: 97 de navegador (iPhone, iPad, escritorio) y 37 de
    SUPABASE_INTERNAL_IMAGE_REGISTRY=ghcr.io npx supabase start -x studio,imgproxy,edge-runtime,logflare,vector,supavisor,realtime
    # .env.local (no se sube a git): URL http://127.0.0.1:54321 y la PUBLISHABLE_KEY que muestra `npx supabase status`
    ```
+   Si Docker se detiene a mitad de sesión, arráncalo con `setsid nohup dockerd > /tmp/dockerd.log 2>&1 < /dev/null &`.
    El entorno de Claude «Revanta» ya permite `ui.shadcn.com` y `pkg-containers.githubusercontent.com`.
 3. Comprueba que todo sigue en verde antes de tocar nada:
-   `npm run lint && npm run typecheck && npm run build && npm run test:e2e && npm run db:test`
+   `npm run lint && npm run typecheck && npm run test:unit && npm run build && npm run test:e2e && npm run db:test`
 4. Continúa por la primera fase pendiente de la tabla de arriba. Si hay una sección «Trabajo en curso» más abajo, empieza por ahí.
 5. No gastes dinero, no publiques y no conectes servicios externos sin aprobación del propietario.

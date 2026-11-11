@@ -20,6 +20,7 @@ This block is written and re-added by `next dev` — verify at `node_modules/nex
 - Next.js conserva el estado de las páginas visitadas (Activity): envuelve cada formulario en `<ResetOnNavigate>` y envíalo con `onSubmit` + `startTransition` para no perder lo escrito tras un error. En las pruebas, usa selectores exactos o `.filter({ visible: true })`: las páginas ocultas siguen en el DOM.
 - Beneficio neto de un producto = venta − comisión − envío − compra − gastos asociados. Beneficio del mes = beneficio de las ventas del mes − gastos generales (sin producto) del mes. Suma siempre en céntimos (`sumMoney`).
 - Las fotos se comprimen en el navegador y se suben directamente a Storage (`<usuario>/<producto>/<foto>.jpg`); el servidor valida las rutas. Se muestran con URLs firmadas.
+- IA de anuncios (`src/lib/ai/`): solo servidor (`service.ts` es `server-only`), modelo `claude-haiku-5-5`, clave en `ANTHROPIC_API_KEY` (nunca `NEXT_PUBLIC_`, nunca en registros). Las pruebas no llaman jamás a la API real: cliente falso en las unitarias y `AI_MOCK=1` sin clave en las de navegador. Cada generación se registra en `ai_generations` (límite por usuario cada 24 h).
 - No inventes datos en la interfaz: si una función no existe aún, muéstralo con `ComingSoonBadge`.
-- Antes de subir cambios: `npm run lint && npm run typecheck && npm run build && npm run test:e2e && npm run db:test`.
+- Antes de subir cambios: `npm run lint && npm run typecheck && npm run test:unit && npm run build && npm run test:e2e && npm run db:test`.
 - Sin conexión de red a Docker Hub en el entorno de Claude: usa `SUPABASE_INTERNAL_IMAGE_REGISTRY=ghcr.io` con los comandos de Supabase.
