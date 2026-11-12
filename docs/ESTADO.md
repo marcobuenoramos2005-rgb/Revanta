@@ -3,7 +3,7 @@
 > Este archivo se actualiza al terminar cada fase (y en cada parada intermedia).
 > Sirve para retomar el trabajo exactamente donde se dejó, también en una sesión nueva.
 
-**Última actualización:** 11/11/2026 — Conectando el proyecto real de Supabase; iniciada la Fase 7 (preparación para producción).
+**Última actualización:** 12/11/2026 — Supabase real verificado; app adaptada a las plantillas de email por defecto; pendiente la prueba con un usuario real.
 
 ## Dónde está el código
 
@@ -22,7 +22,7 @@
 | 5. Panel y estadísticas | Beneficio por mes, plataforma y categoría; margen; días hasta la venta; stock parado; últimas ventas | ✅ |
 | 6. IA de anuncios | Integración con Claude Haiku 5.5 solo en servidor, límite diario, registro de consumo y coste, modo simulado | ✅ construida · ⏳ sin probar con la IA real |
 
-Pruebas en el último commit: 27 unitarias (IA con cliente simulado), 112 de navegador (iPhone, iPad, escritorio) y 37 de base de datos, todas en verde, también en GitHub Actions.
+Pruebas en el último commit: 27 unitarias (IA con cliente simulado), 124 de navegador (iPhone, iPad, escritorio) y 37 de base de datos, todas en verde, también en GitHub Actions.
 
 ## Supabase real (en curso)
 
@@ -31,13 +31,18 @@ Pruebas en el último commit: 27 unitarias (IA con cliente simulado), 112 de nav
 - ✅ Archivo SQL 2 ejecutado por el propietario (Success).
 - ✅ URL y *Publishable key* guardadas en `.env.real.local` (no se sube a git; si falta, pedírselas de nuevo: son públicas).
 - ✅ `npm run supabase:check` contra el proyecto real: 13 de 13 correctas (tablas, función, anónimos sin acceso, confirmación de email activada).
-- ⏳ Pendiente de confirmar qué versión del archivo 1 se ejecutó (permisos explícitos o no): consulta de solo lectura entregada al propietario.
-- ⏳ Después: configurar Auth (paso 4 de `CONFIGURAR-SUPABASE.md`) y prueba completa con sesión (incluye confirmar que el almacén de fotos es privado).
+- ✅ Confirmado por el propietario: está instalada la versión con permisos explícitos (326 líneas).
+- ✅ Auth: Site URL `http://localhost:3000`, Redirect URL `http://localhost:3000/**`, contraseña mínima 8 (hecho por el propietario).
+- ⚠️ Las plantillas de email NO se pueden editar (restricción del plan gratuito con email por defecto, proyectos desde 03/06/2026). La app admite ahora los enlaces por defecto vía `/auth/callback` (PKCE) y conserva `/auth/confirm` (token_hash).
+- ✅ App arrancada contra el proyecto real (sin crear cuentas): protección de rutas, login rechazado por Supabase real, y las dos rutas de enlaces responden. Comando: `set -a; . ./.env.real.local; set +a; NODE_USE_ENV_PROXY=1 npm run build && NODE_USE_ENV_PROXY=1 npm run start` (después hay que recompilar en local para las pruebas).
+- ⏳ Prueba con usuario real: necesita el email del propietario (el mismo de su cuenta de Supabase) y que pegue en el chat el enlace del email, o bien publicar en Vercel ([`PUBLICAR-EN-VERCEL.md`](PUBLICAR-EN-VERCEL.md), no autorizado todavía).
+- ⏳ Después de la prueba de registro: prueba completa con sesión (producto con foto, gasto, venta, borrado de cuenta y confirmar que el almacén de fotos es privado).
 - El propietario eligió la opción A: ejecuta él el SQL; **no** quiere tokens de acceso ni claves secretas.
 
 ## Fase 7 (en curso)
 
 - ✅ Cabeceras de seguridad, sin `X-Powered-By`, pantallas de error (`error.tsx`), pruebas de seguridad.
+- Recomendado antes de abrir al público: pantalla intermedia de confirmación (evita que filtros de correo gasten el enlace) y proveedor de email propio con dominio.
 - ⏳ Pendiente: textos legales (necesitan los datos del titular), paginación, limpieza de fotos huérfanas, email de producción, despliegue en Vercel.
 
 ## Ampliaciones pedidas por el propietario (11/11/2026)

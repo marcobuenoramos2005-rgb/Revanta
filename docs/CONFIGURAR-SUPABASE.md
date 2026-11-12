@@ -63,6 +63,8 @@ Ejecuta cada archivo **una sola vez** y en ese orden. Si alguno da error, no sig
 
 ## Paso 4 — Configurar la autenticación
 
+> **Actualización 12/11/2026 — plantillas de email:** Supabase no permite editar las plantillas en proyectos gratuitos nuevos que usan su email por defecto ([aviso oficial](https://supabase.com/changelog/46599-changes-to-email-template-customisation-on-free-tier)). **El punto 3 de abajo no se puede hacer por ahora.** La app se ha adaptado para funcionar con las plantillas por defecto (ruta `/auth/callback`); los emails llegan en inglés y el enlace debe abrirse en el mismo navegador donde se pidió. Al configurar un proveedor de email propio se desbloquean las plantillas en español (`supabase/templates/`), que entran por `/auth/confirm`.
+
 En **Authentication**:
 
 1. **URL Configuration**
