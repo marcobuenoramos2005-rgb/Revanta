@@ -12,6 +12,7 @@ import {
   signUpSchema,
 } from "@/lib/auth/schemas";
 import type { FormState } from "@/lib/form-state";
+import { authCallbackUrl } from "@/lib/site-url";
 import { createClient } from "@/lib/supabase/server";
 
 function text(formData: FormData, key: string): string {
@@ -43,7 +44,11 @@ export async function signUp(_prev: FormState, formData: FormData): Promise<Form
   }
 
   const supabase = await createClient();
-  const { data, error } = await supabase.auth.signUp(parsed.data);
+  const { data, error } = await supabase.auth.signUp({
+    ...parsed.data,
+    // Usado por las plantillas por defecto de Supabase; las propias (token_hash) lo ignoran.
+    options: { emailRedirectTo: await authCallbackUrl("/panel") },
+  });
   if (error) {
     return { error: authErrorMessage(error), values: { email } };
   }
@@ -60,7 +65,11 @@ export async function resendConfirmation(_prev: FormState, formData: FormData): 
   if (!parsed.success) return { error: "Email no válido." };
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.resend({ type: "signup", email: parsed.data.email });
+  const { error } = await supabase.auth.resend({
+    type: "signup",
+    email: parsed.data.email,
+    options: { emailRedirectTo: await authCallbackUrl("/panel") },
+  });
   if (error) return { error: authErrorMessage(error) };
   return { success: "Te hemos enviado un nuevo email de confirmación." };
 }
@@ -73,7 +82,9 @@ export async function requestPasswordReset(_prev: FormState, formData: FormData)
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email);
+  const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {
+    redirectTo: await authCallbackUrl("/restablecer"),
+  });
   // Solo informamos de límites de envío; cualquier otro caso responde igual
   // para no revelar si el email está registrado.
   if (error?.code === "over_email_send_rate_limit" || error?.code === "over_request_rate_limit") {

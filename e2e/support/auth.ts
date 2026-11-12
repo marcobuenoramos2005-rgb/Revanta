@@ -72,3 +72,18 @@ export async function signOut(page: Page) {
 export function formError(page: Page, text: string | RegExp) {
   return page.getByRole("alert").filter({ hasText: text });
 }
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "http://127.0.0.1:54321";
+
+/**
+ * Convierte el enlace de nuestra plantilla (token_hash → /auth/confirm) en el enlace
+ * que generan las plantillas POR DEFECTO de Supabase ({{ .ConfirmationURL }}):
+ * primero pasa por Supabase y este redirige a /auth/callback con un código.
+ */
+export function toDefaultTemplateLink(link: string, type: "signup" | "recovery") {
+  const tokenHash = new URL(link).searchParams.get("token_hash");
+  if (!tokenHash) throw new Error("El enlace no contiene token_hash");
+  const next = type === "signup" ? "/panel" : "/restablecer";
+  const redirectTo = `http://localhost:3000/auth/callback?next=${encodeURIComponent(next)}`;
+  return `${SUPABASE_URL}/auth/v1/verify?token=${tokenHash}&type=${type}&redirect_to=${encodeURIComponent(redirectTo)}`;
+}

@@ -14,6 +14,8 @@ import { initialFormState } from "@/lib/form-state";
 
 const linkErrors: Record<string, string> = {
   enlace: "El enlace no es válido o ha caducado. Solicita uno nuevo.",
+  navegador:
+    "No hemos podido iniciar tu sesión automáticamente. Si estabas confirmando tu cuenta, ya está confirmada: inicia sesión con tu email y contraseña. Si querías cambiar la contraseña, abre el enlace en el mismo navegador donde lo solicitaste.",
 };
 
 export function LoginForm({ next, errorCode }: { next?: string; errorCode?: string }) {
