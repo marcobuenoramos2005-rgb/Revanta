@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 import { publicEnv } from "@/lib/env";
+import { sessionCookieOptions } from "./cookie-options";
 import type { Database } from "./database.types";
 
 /** Rutas que requieren sesión. */
@@ -35,6 +36,7 @@ export async function updateSession(request: NextRequest) {
     publicEnv.supabaseUrl(),
     publicEnv.supabasePublishableKey(),
     {
+      cookieOptions: sessionCookieOptions(),
       cookies: {
         getAll() {
           return request.cookies.getAll();

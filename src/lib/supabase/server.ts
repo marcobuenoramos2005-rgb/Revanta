@@ -4,6 +4,7 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 import { publicEnv } from "@/lib/env";
+import { sessionCookieOptions } from "./cookie-options";
 import type { Database } from "./database.types";
 
 /**
@@ -19,6 +20,7 @@ export async function createClient() {
     publicEnv.supabaseUrl(),
     publicEnv.supabasePublishableKey(),
     {
+      cookieOptions: sessionCookieOptions(),
       cookies: {
         getAll() {
           return cookieStore.getAll();

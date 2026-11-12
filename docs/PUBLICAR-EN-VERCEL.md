@@ -44,4 +44,12 @@ No hay que configurar nada: en Vercel la app usa automáticamente la dirección 
 
 ## Rama de publicación
 
-El trabajo está en la rama `claude/revanta-saas-planning-cibbqs`. Antes de publicar conviene crear la rama `main` a partir de ella (mediante un *pull request*) y que Vercel publique desde `main`.
+Vercel publica desde la rama `main`. Se crea a partir del primer commit del proyecto y el resto del trabajo entra mediante un *pull request* desde `claude/revanta-saas-planning-cibbqs`, que el propietario revisa y fusiona. No se pierde ni se reescribe ningún commit.
+
+## Comprobado antes de publicar (12/11/2026)
+
+- Compilación desde un clon limpio del repositorio, solo con las dos variables públicas: correcta.
+- Esa compilación, arrancada contra el proyecto real de Supabase: inicio de sesión, subida de foto, almacén privado y borrado de la foto al eliminar el producto.
+- En modo Vercel la cookie de sesión se marca `Secure`; los enlaces de los emails usan la dirección de producción de Vercel (pruebas unitarias).
+- Sin `ANTHROPIC_API_KEY`, la IA aparece como «no activada» y no puede generar gasto.
+- `vercel.json` fija la región `fra1` (Fráncfort), junto a la base de datos. `robots.txt` pide no indexar mientras dure la prueba privada.
